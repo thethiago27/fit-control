@@ -12,7 +12,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Setup Environment
-        run: SET DATABASE_URL=${{ secrets.DEPLOY_DATABASE_URL }}
+        run: export DATABASE_URL=${{ secrets.DEPLOY_DATABASE_URL }}
       - name: Migration
         run: yarn prisma migrate deploy
 
