@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model WorkoutType {
+  id         String       @id @default(uuid())
+  name       String       @unique
+  Exercise   Exercise[]
+  WorkoutLog WorkoutLog[]
+}
+
+// Model to represent exercises
+model Exercise {
+  id              String            @id @default(uuid())
+  name            String
+  type            WorkoutType       @relation(fields: [workoutTypeId], references: [id])
+  workoutTypeId   String
+  sets            Int               @default(0)
+  reps            Int               @default(0)
+  slug            String            @unique
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @default(now()) @updatedAt
+  UserExerciseLog UserExerciseLog[]
+}
+
+model WorkoutLog {
+  id              String            @id @default(uuid())
+  startedAt       DateTime          @default(now())
+  endedAt         DateTime?
+  completed       Boolean           @default(false)
+  userId          String
+  workoutListId   String
+  WorkoutList     WorkoutList       @relation(fields: [workoutListId], references: [id])
+  User            User              @relation(fields: [userId], references: [id])
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @default(now()) @updatedAt
+  UserExerciseLog UserExerciseLog[]
+  WorkoutType     WorkoutType?      @relation(fields: [workoutTypeId], references: [id])
+  workoutTypeId   String?
+}
+
+model User {
+  id              String            @id @default(uuid())
+  name            String
+  uid             String            @unique
+  email           String            @unique
+  photoUrl        String?
+  emailVerified   Boolean           @default(false)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @default(now()) @updatedAt
+  UserExerciseLog UserExerciseLog[]
+  WorkoutLog      WorkoutLog[]
+}
+
+model UserExerciseLog {
+  id           String          @id @default(uuid())
+  workoutLogId String
+  WorkoutLog   WorkoutLog      @relation(fields: [workoutLogId], references: [id])
+  exerciseId   String
+  weight       Int             @default(0)
+  reps         Int             @default(0)
+  sets         Int             @default(0)
+  performance  WorkoutCategory @default(LIGHT)
+  Exercise     Exercise        @relation(fields: [exerciseId], references: [id])
+  completed    Boolean         @default(false)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @default(now()) @updatedAt
+  userId       String
+  User         User            @relation(fields: [userId], references: [id])
+}
+
+model WorkoutList {
+  id         String       @id @default(uuid())
+  name       String
+  exercises  String[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  WorkoutLog WorkoutLog[]
+}
+
+// Enum to represent workout categories
+enum WorkoutCategory {
+  LIGHT
+  HEAVY
+  BRUTAL
+}
