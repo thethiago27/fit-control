@@ -2,7 +2,7 @@ name: Deploy Environment To Vercel
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   deploy:
