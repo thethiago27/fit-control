@@ -13,4 +13,4 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Migration
-        run: yarn prisma db push --preview-feature
+        run: yarn prisma migrate deploy
