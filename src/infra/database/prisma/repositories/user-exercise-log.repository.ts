@@ -9,7 +9,6 @@ export class UserExerciseLogRepository {
       where: {
         workoutLogId,
       },
-      cacheStrategy: { ttl: 60 },
     })
   }
 
@@ -23,7 +22,6 @@ export class UserExerciseLogRepository {
           equals: false,
         },
       },
-      cacheStrategy: { ttl: 60 },
     })
   }
 

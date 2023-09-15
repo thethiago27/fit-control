@@ -1,5 +1,5 @@
 import { ElementType, useState } from 'react'
-import { motion, useAnimation } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 interface WorkoutBoxButtonProps {
   onClick?: () => void
@@ -15,7 +15,6 @@ export function WorkoutBoxButton({
   isLoading,
 }: WorkoutBoxButtonProps) {
   const [loading, setLoading] = useState(isLoading || false)
-  const controls = useAnimation()
 
   const handleClick = async () => {
     if (onClick && !loading) {
@@ -33,7 +32,7 @@ export function WorkoutBoxButton({
 
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       disabled={isLoading}
       className="bg-purple-700 p-3 rounded flex justify-center items-center gap-4"
     >

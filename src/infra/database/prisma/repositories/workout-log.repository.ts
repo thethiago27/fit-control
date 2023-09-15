@@ -1,7 +1,4 @@
-import {
-  UserExerciseLog as UserExerciseLogRaw,
-  WorkoutLog as WorkoutLogRaw,
-} from '@prisma/client'
+import { WorkoutLog as WorkoutLogRaw } from '@prisma/client'
 import { prisma } from '@/infra/database/prisma/prisma'
 
 export class WorkoutLogRepository {
@@ -37,7 +34,6 @@ export class WorkoutLogRepository {
         userId,
         completed: false,
       },
-      cacheStrategy: { ttl: 60 },
     })
   }
 }

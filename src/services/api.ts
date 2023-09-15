@@ -1,15 +1,10 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios'
+import axios, { AxiosInstance, AxiosResponse } from 'axios'
 import { deleteToken } from '@/app/(auth)/action'
 
-interface IFetcherResponse<T> {
-  data: T
-  status: number
-  headers: any
-}
+const BASE_URL: string =
+  process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000/api'
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000/api'
-
-const api = axios.create({
+const api: AxiosInstance = axios.create({
   baseURL: `${BASE_URL}`,
   timeout: 15000,
 })

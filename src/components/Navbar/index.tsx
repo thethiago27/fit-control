@@ -1,10 +1,9 @@
 'use client'
 
 import { Menu, X } from 'lucide-react'
-import { useReducer, useState } from 'react'
+import { useReducer } from 'react'
 import { NavbarLink } from '@/components/Navbar/NavbarLink'
 import { AnimatePresence, motion } from 'framer-motion'
-import Image from 'next/image'
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useReducer((state) => !state, false)

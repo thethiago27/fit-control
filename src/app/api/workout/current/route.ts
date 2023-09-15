@@ -1,7 +1,6 @@
 import { WorkoutLogRepository } from '@/infra/database/prisma/repositories/workout-log.repository'
 import { NextResponse } from 'next/server'
 
-import { cookies } from 'next/headers'
 import { JwtStrategy } from '@/infra/http/auth/jwt.strategy'
 
 export async function GET() {

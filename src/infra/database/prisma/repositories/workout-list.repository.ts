@@ -3,7 +3,7 @@ import { prisma } from '@/infra/database/prisma/prisma'
 
 export class PrismaWorkoutListRepository {
   static async getAll(): Promise<WorkoutListRaw[]> {
-    return prisma.workoutList.findMany({ cacheStrategy: { ttl: 60 } })
+    return prisma.workoutList.findMany()
   }
 
   static async getByName(id: string): Promise<WorkoutListRaw | null> {
@@ -11,7 +11,6 @@ export class PrismaWorkoutListRepository {
       where: {
         name: id,
       },
-      cacheStrategy: { ttl: 60 },
     })
   }
 
