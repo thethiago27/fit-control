@@ -7,7 +7,7 @@ export class PrismaWorkoutListRepository {
   }
 
   static async getByName(id: string): Promise<WorkoutListRaw | null> {
-    return await prisma.workoutList.findFirst({
+    return prisma.workoutList.findFirst({
       where: {
         name: id,
       },
@@ -15,7 +15,7 @@ export class PrismaWorkoutListRepository {
   }
 
   static async getById(id: string): Promise<WorkoutListRaw | null> {
-    return await prisma.workoutList.findUnique({
+    return prisma.workoutList.findUnique({
       where: {
         id,
       },
