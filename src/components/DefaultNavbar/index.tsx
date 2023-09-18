@@ -4,8 +4,9 @@ import { Menu, X } from 'lucide-react'
 import { useReducer } from 'react'
 import { NavbarLink } from '@/components/NavbarLink'
 import { AnimatePresence, motion } from 'framer-motion'
+import { SignInButton } from '@/components/SignInButton'
 
-export function Navbar() {
+export function DefaultNavbar() {
   const [isOpen, setIsOpen] = useReducer((state) => !state, false)
 
   return (
@@ -61,7 +62,8 @@ export function Navbar() {
             >
               <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <NavbarLink href="/">Home</NavbarLink>
-                <NavbarLink href="/history">Histórico de Treino</NavbarLink>
+                <NavbarLink href="/history">Sobre</NavbarLink>
+                <SignInButton />
               </div>
             </motion.div>
           )}
