@@ -2,7 +2,16 @@ import { PrismaWorkoutListRepository } from '@/infra/database/prisma/repositorie
 import { NextResponse } from 'next/server'
 
 export async function GET() {
-  const workoutList = await PrismaWorkoutListRepository.getAll()
+  try {
+    const workoutList = await PrismaWorkoutListRepository.getAll()
 
-  return NextResponse.json(workoutList)
+    return NextResponse.json(workoutList)
+  } catch (e) {
+    return new Response('', {
+      status: 500,
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
+  }
 }
