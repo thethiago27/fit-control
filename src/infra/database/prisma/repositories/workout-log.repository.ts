@@ -1,39 +1,43 @@
-import { WorkoutLog as WorkoutLogRaw } from '@prisma/client'
-import { prisma } from '@/infra/database/prisma/prisma'
+import { WorkoutLogRepository } from '@/infra/database/repositories/workout-log.repository'
+import { AsyncMaybe } from '@/infra/core/logic/Maybe'
+import { WorkoutLog } from '@/infra/domain/entities/workout-log.entity'
+import { WorkoutLogMapper } from '@/infra/database/prisma/mappers/workout-log.mapper'
+import { PrismaClient } from '@prisma/client'
 
-export class WorkoutLogRepository {
-  static async create(
-    userId: string,
-    workoutListId: string,
-  ): Promise<WorkoutLogRaw> {
-    return prisma.workoutLog.create({
-      data: {
-        userId,
-        workoutListId,
-      },
-    })
+export class PrismaWorkoutLogRepository extends WorkoutLogRepository {
+  constructor(private readonly prisma: PrismaClient) {
+    super()
   }
 
-  static async update(
-    workoutLogId: string,
-    data: Partial<WorkoutLogRaw>,
-  ): Promise<WorkoutLogRaw> {
-    return prisma.workoutLog.update({
+  async create(workoutLog: WorkoutLog): Promise<WorkoutLog> {
+    await this.prisma.workoutLog.create({
+      data: WorkoutLogMapper.toPersistence(workoutLog),
+    })
+
+    return workoutLog
+  }
+
+  async update(workout: WorkoutLog): Promise<WorkoutLog> {
+    await this.prisma.workoutLog.update({
       where: {
-        id: workoutLogId,
+        id: workout.id,
       },
-      data,
+      data: WorkoutLogMapper.toPersistence(workout),
     })
+
+    return workout
   }
 
-  static async checkHasCurrentWorkout(
-    userId: string,
-  ): Promise<WorkoutLogRaw | null> {
-    return prisma.workoutLog.findFirst({
+  async checkHasCurrentWorkout(userId: string): AsyncMaybe<WorkoutLog> {
+    const workout = await this.prisma.workoutLog.findFirst({
       where: {
         userId,
         completed: false,
       },
     })
+
+    if (!workout) return null
+
+    return WorkoutLogMapper.toDomain(workout)
   }
 }

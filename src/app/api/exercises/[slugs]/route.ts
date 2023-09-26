@@ -1,4 +1,7 @@
 import { PrismaExercisesRepository } from '@/infra/database/prisma/repositories/exercises.repository'
+import { prisma } from '@/infra/database/prisma/prisma'
+import { JsonResponse } from '@/infra/http/response/response.http'
+import { StatusCode } from '@/infra/http/status-code'
 
 export async function GET(
   request: Request,
@@ -7,17 +10,14 @@ export async function GET(
   try {
     const { slug } = params
 
-    const exercises = await PrismaExercisesRepository.getById(slug)
+    const exercises = new PrismaExercisesRepository(prisma)
+    const exercisesById = await exercises.getByIds(slug)
 
-    return new Response(JSON.stringify(exercises), {
-      status: 200,
-      headers: {
-        'content-type': 'application/json',
-      },
-    })
+    return new JsonResponse(exercisesById, StatusCode.OK).send()
   } catch (e) {
-    return new Response(JSON.stringify({ error: 'Erro ao obter' }), {
-      status: 500,
-    })
+    return new JsonResponse(
+      { error: 'Fail to get exercises' },
+      StatusCode.INTERNAL_SERVER_ERROR,
+    ).send()
   }
 }

@@ -8,8 +8,10 @@ declare module 'jsonwebtoken' {
   }
 }
 export class JwtStrategy {
-  static generateToken(id: string): string {
-    return sign({ id }, process.env.JWT_SECRET as Secret, {
+  constructor(private readonly userId: string) {}
+
+  generateToken(): string {
+    return sign({ id: this.userId }, process.env.JWT_SECRET as Secret, {
       expiresIn: '7d',
     })
   }

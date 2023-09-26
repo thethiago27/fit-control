@@ -1,34 +1,54 @@
 import { PrismaUserRepository } from '@/infra/database/prisma/repositories/user.repository'
-import { v4 as uuid } from 'uuid'
+import { prisma } from '@/infra/database/prisma/prisma'
+import { GetUserByEmailUseCase } from '@/infra/application/use-cases/user/get-user-by-email.use-case'
+import { UserEntity } from '@/infra/domain/entities/user.entity'
+import { JsonResponse } from '@/infra/http/response/response.http'
+import { createToken } from '@/app/(auth)/action'
 import { JwtStrategy } from '@/infra/http/auth/jwt.strategy'
+import { StatusCode } from '@/infra/http/status-code'
+
+type Response = {
+  token: string
+}
 
 export async function POST(req: Request) {
-  const { uid, email, name, photoUrl } = await req.json()
+  try {
+    const { uid, email, name, photoUrl } = await req.json()
 
-  const existingUser = await PrismaUserRepository.getByEmail(email)
+    if (!email || !name || !photoUrl) {
+      throw new Error('Missing required fields')
+    }
 
-  const userId = existingUser?.id || uuid()
+    const userRepository = new PrismaUserRepository(prisma)
 
-  if (!existingUser) {
-    await PrismaUserRepository.create({
-      uid,
-      email,
-      name,
-      photoUrl,
-      emailVerified: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      id: userId,
-    })
+    const getUserByEmailUseCase = new GetUserByEmailUseCase(userRepository)
+
+    const existingUserByEmail = await getUserByEmailUseCase.handle(email)
+
+    let userId: string
+
+    if (existingUserByEmail.isLeft()) {
+      const user = new UserEntity({
+        email,
+        name,
+        photoUrl,
+        uid,
+        emailVerified: true,
+      })
+
+      await userRepository.create(user)
+
+      userId = user.id
+    } else {
+      userId = existingUserByEmail.value.id
+    }
+
+    const jwt = new JwtStrategy(userId).generateToken()
+
+    await createToken(jwt)
+
+    return new JsonResponse('', StatusCode.OK).send()
+  } catch (error: any) {
+    return new JsonResponse(error.message, 400).send()
   }
-
-  console.log('userId', userId)
-
-  const token = JwtStrategy.generateToken(userId)
-
-  return new Response(JSON.stringify({ token }), {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
 }

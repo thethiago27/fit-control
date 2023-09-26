@@ -6,6 +6,7 @@ import { post } from '@/services/api'
 import { Checks, Spinner } from '@phosphor-icons/react'
 import { useForm } from 'react-hook-form'
 import { ExerciseFormButton } from '@/components/ExerciseForm/ExerciseFormButton'
+import { toast } from 'react-toastify'
 
 interface ExerciseFormData {
   weight: string
@@ -36,7 +37,7 @@ export function ExerciseForm({ id, mutationUrl }: ExerciseProps) {
       await mutate(mutationUrl)
       setLoading(false)
     } catch (e) {
-      alert('erro ao atualizar dados')
+      toast.error('Erro ao concluir exercício')
     }
   }
 

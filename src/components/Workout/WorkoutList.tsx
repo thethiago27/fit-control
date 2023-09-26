@@ -6,9 +6,14 @@ import { WorkoutBox } from '@/components/Workout/WorkoutBox'
 import { Loading } from '@/components/Loading'
 
 interface UserWorkoutCurrentResponse {
-  workoutTypeId?: string
+  workoutListId?: string
   workoutLogId?: string
   active: boolean
+}
+
+interface WorkoutListProps {
+  _id: string
+  props: WorkoutListRaw
 }
 
 export function WorkoutList() {
@@ -16,7 +21,7 @@ export function WorkoutList() {
     UserWorkoutCurrentResponse,
     any
   >(`/user-workout/current`)
-  const { data } = useFetch<WorkoutListRaw[], any>(`/workout/list`)
+  const { data } = useFetch<WorkoutListProps[], any>(`/workout/list`)
 
   if (isLoading) {
     return <Loading />
@@ -26,9 +31,9 @@ export function WorkoutList() {
     <section className="flex flex-col gap-4">
       {data?.map((workout) => (
         <WorkoutBox
-          key={workout.id}
+          key={workout._id}
           workout={workout}
-          isActive={workout.id === currentWorkout?.workoutTypeId}
+          isActive={workout._id === currentWorkout?.workoutListId}
           workoutLogId={currentWorkout?.workoutLogId || ''}
         />
       ))}

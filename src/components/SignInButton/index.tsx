@@ -1,7 +1,5 @@
 'use client'
 
-import { createToken } from '@/app/(auth)/action'
-
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
@@ -30,14 +28,14 @@ export function SignInButton() {
 
       const { uid, displayName, photoURL, email } = result.user
 
-      const reponse = await post<AuthResponse, AuthRequestBody>('/auth', {
+      await post<AuthResponse, AuthRequestBody>('/auth', {
         uid,
         email,
         name: displayName || email,
         photoUrl: photoURL || '',
       })
 
-      await createToken(reponse.token)
+      // await createToken(reponse.token)
 
       router.push(`/workout`)
     } catch (e) {

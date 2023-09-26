@@ -18,7 +18,7 @@ export async function fetcher<T>(
   } catch (error: any) {
     if (error.response && error.response.status === 401) {
       await deleteToken()
-      window.location.reload()
+      window.location.href = '/'
     }
 
     if (error.message === 'Network Error') {

@@ -1,30 +1,31 @@
-import { WorkoutList as WorkoutListRaw } from '@prisma/client'
-import { prisma } from '@/infra/database/prisma/prisma'
+import { PrismaClient } from '@prisma/client/edge'
+import { WorkoutListRepository } from '@/infra/database/repositories/workout-list.repository'
+import { WorkoutListMapper } from '@/infra/database/prisma/mappers/workout-list.mapper'
+import { WorkoutList } from '@/infra/domain/entities/workout-list.entity'
+import { AsyncMaybe } from '@/infra/core/logic/Maybe'
 
-export class PrismaWorkoutListRepository {
-  static async getAll(): Promise<WorkoutListRaw[]> {
-    return prisma.workoutList.findMany({ cacheStrategy: { ttl: 60 } })
+export class PrismaWorkoutListRepository extends WorkoutListRepository {
+  constructor(private readonly prisma: PrismaClient) {
+    super()
   }
 
-  static async getByName(id: string): Promise<WorkoutListRaw | null> {
-    return prisma.workoutList.findFirst({
-      where: {
-        name: id,
-      },
-    })
+  async getAll(): Promise<WorkoutList[]> {
+    const workoutList = await this.prisma.workoutList.findMany()
+
+    return workoutList.map(WorkoutListMapper.toDomain)
   }
 
-  static async getById(id: string): Promise<WorkoutListRaw | null> {
-    return prisma.workoutList.findUnique({
+  async getById(id: string): AsyncMaybe<WorkoutList> {
+    const workoutList = await this.prisma.workoutList.findUnique({
       where: {
         id,
       },
     })
-  }
 
-  static async create(data: any) {
-    return prisma.workoutList.create({
-      data,
-    })
+    if (!workoutList) {
+      return null
+    }
+
+    return WorkoutListMapper.toDomain(workoutList)
   }
 }
