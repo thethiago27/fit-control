@@ -4,8 +4,8 @@ import { Either, left, right } from '@/infra/core/logic/Either'
 import { UserExerciseLogRepository } from '@/infra/database/repositories/user-exercise-log.repository'
 
 type CheckHasWorkoutInProgress = Either<
-  CheckHasWorkoutInProgressError,
-  UserExerciseLog
+  UserExerciseLog,
+  CheckHasWorkoutInProgressError
 >
 
 export class CheckHasWorkoutInProgressUseCase {
@@ -17,10 +17,10 @@ export class CheckHasWorkoutInProgressUseCase {
     const workout =
       await this.userExerciseLogRepository.checkHasWorkoutInProgress(id)
 
-    if (!workout) {
-      return left(new CheckHasWorkoutInProgressError())
+    if (workout) {
+      return left(workout)
     }
 
-    return right(workout)
+    return right(new CheckHasWorkoutInProgressError())
   }
 }

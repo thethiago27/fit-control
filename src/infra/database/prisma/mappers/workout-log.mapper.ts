@@ -7,6 +7,9 @@ export class WorkoutLogMapper {
       {
         workoutListId: raw.workoutListId,
         userId: raw.userId,
+        completed: raw.completed,
+        endedAt: raw.endedAt as Date,
+        createdAt: raw.createdAt,
       },
       raw.id,
     )
@@ -19,6 +22,8 @@ export class WorkoutLogMapper {
       id: container.id,
       userId: container.userId,
       workoutListId: container.workoutListId,
+      completed: container.completed,
+      endedAt: container.endedAt,
     }
   }
 }

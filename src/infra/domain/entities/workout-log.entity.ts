@@ -4,6 +4,8 @@ import { Replace } from '@/infra/core/logic/Replace'
 export type WorkoutLogProps = {
   workoutListId: string
   userId: string
+  completed: boolean
+  endedAt: Date
 }
 
 export class WorkoutLog extends Entity<WorkoutLogProps> {
@@ -13,6 +15,14 @@ export class WorkoutLog extends Entity<WorkoutLogProps> {
 
   get userId(): string {
     return this.props.userId
+  }
+
+  get completed(): boolean {
+    return this.props.completed
+  }
+
+  get endedAt(): Date {
+    return this.props.endedAt
   }
 
   static create(

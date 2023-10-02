@@ -37,9 +37,9 @@ export async function POST(req: Request) {
   const checkUserHasWorkoutInProgressUseCase =
     await checkHasWorkoutInProgressUseCase.handle(userId.id)
 
-  if (checkUserHasWorkoutInProgressUseCase.isLeft()) {
+  if (checkUserHasWorkoutInProgressUseCase.isRight()) {
     return new JsonResponse(
-      checkUserHasWorkoutInProgressUseCase.value,
+      'User already in workout',
       StatusCode.USER_INPUT_ERROR,
     ).send()
   }
@@ -47,6 +47,8 @@ export async function POST(req: Request) {
   const workout = WorkoutLog.create({
     workoutListId,
     userId: userId.id,
+    completed: false,
+    endedAt: new Date(),
     createdAt: new Date(),
   })
 
